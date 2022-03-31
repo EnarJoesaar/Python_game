@@ -1,11 +1,11 @@
 # Python game
-Tulnuka mäng mida saab mängida ja mis sarnaneb kuulsale mängule Space Invaders
+How do create a python scripted game yourself
 
 ## Getting started
-In my Github(@EnarJoesaar) you can find a copy of the game for yourself
+ 
 ### Prerequisites
 
-You need software that can run a python script
+You need software where you can create and run a python script
 
 ```
 For example Thonny or PyCharm
@@ -13,7 +13,7 @@ For example Thonny or PyCharm
 
 ### Installing
 
-You also need the pygame script before you start
+Before you start you also need the pygame script
 
 that can be achieved in PyCharm by...
 
@@ -24,64 +24,112 @@ Click the Python Interpreter tab within your project tab.
 Click the small + symbol to add a new library to the project.
 ```
 
-And then copying or downloading 
+You then need to start with something basic that defines the items you'd like the game to have like I have done....
 
 ```
-until finished
-```
+def run_game():
+    pygame.init()
+    game_settings = Settings()
+    screen = pygame.display.set_mode((game_settings.screen_width, game_settings.screen_height))
+    pygame.display.set_caption("Example Game")
+    play_button = Button(game_settings, screen, "Play")
+    stats = GameStats(game_settings)
+    sb = Scoreboard(game_settings, screen, stats)
 
-End with an example of getting some data out of the system or using it for a little demo
-
-## Running the tests
-
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-### And coding style tests
-
-Explain what these tests test and why
+    ship = Ship(game_settings, screen)
+    bullets = Group()
+    aliens = Group()
+    gf.create_fleet(game_settings, screen, ship, aliens)
 
 ```
-Give an example
+
+So for an example I have defined the game settings, play button, stats, scoreboard, ship, bullets etc
+
+And then created classes for them like for example scoreboard...
+
+```
+import pygame.font
+class Scoreboard():
+    def __init__(self, game_settings, screen, stats):
+        """Init scoreboard atributes"""
+        self.screen = screen
+        self.screen_rect = screen.get_rect()
+        self.game_settings = game_settings
+        self.stats = stats
+        # score atributes - size, color, font
+        self.text_color = (0, 0, 0)
+        self.font = pygame.font.SysFont(None, 46)
+        # setting ready graphic score
+        self.prepare_score()
+
+    def prepare_score(self):
+        """converting the score into graphic component"""
+        score_str = str(self.stats.score)
+        self.score_image = self.font.render(score_str, True, self.text_color, self.game_settings.bg_color)
+        self.score_image_rect = self.score_image.get_rect()
+        self.score_image_rect.right = self.screen_rect.right - 20
+        self.score_image_rect.top = 20
+
+    def draw_score(self):
+        self.screen.blit(self.score_image, self.score_image_rect)
 ```
 
-## Deployment
+Or for bullets...
 
-Add additional notes about how to deploy this on a live system
+```
+import pygame
+from pygame.sprite import Sprite
+
+class Bullet(Sprite):
+    """Kuuli klass"""
+    def __init__(self, game_setting, screen, ship):
+        """Bullet spawing place near the ship"""
+        super().__init__()
+        self.screen = screen
+        # making the bullet
+        self.rect = pygame.Rect(0, 0, game_setting.bullet_width, game_setting.bullet_height)
+        self.rect.centerx = ship.rect.centerx
+        self.rect.top = ship.rect.top
+        # position of the bullet
+        self.y = float(self.rect.y)
+        # settings of bullets
+        self.color = game_setting.bullet_color
+        self.speed_factor = game_setting.bullet_speed_factor
+    def update(self):
+        """Updating bullets location"""
+        self.y -= self.speed_factor
+        self.rect.y = self.y
+    def draw_bullet(self):
+        """Making the bullet on the screen"""
+        pygame.draw.rect(self.screen, self.color, self.rect)
+```
+
+##Notes to keep in mind
+Don't forget to import your classes, it's really important if you want your game to run properly as an example...
+
+```
+from pygame.sprite import Group
+
+from settings import Settings
+
+from game_stats import GameStats
+from button import Button
+from scoreboard import Scoreboard
+
+from ship import Ship
+from alien import Alien
+import game_functions as gf
+```
+## Authors
+
+* **Enar Jõesaar** - *Github* [EnarJoesaar](https://github.com/EnarJoesaar)
 
 ## Built With
 
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
+* [PyCharm](https://www.jetbrains.com/pycharm/) - Used to create the game
 
-## Contributing
+## My creation
 
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
+You can find and clone my game at...
 
-## Versioning
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
-
-## Authors
-
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-
-## Acknowledgments
-
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
+* **https://github.com/EnarJoesaar/Python_game** 
